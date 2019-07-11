@@ -81,6 +81,51 @@ class ScriptingApi:
                           variables={'missionId': self.mission_id(), 'systemName': system_name, 'subsystemName': subsystem_name, 'name': name},
                           path='data.metric')
 
+    def command_definition(self, system_name, command_type, fields=[]):
+        default_fields = ['id', 'displayName', 'commandType', 'fields']
+
+        graphql = """
+            query CommandDefinitionQuery($missionId: ID!, $systemName: String!, $commandType: String!) {
+                commandDefinition(missionId: $missionId, systemName: $systemName, commandType: $commandType) {
+                    %s
+                }
+            }
+        """ % ', '.join(set().union(default_fields, fields))
+
+        return self.query(graphql,
+                          variables={'missionId': self.mission_id(), 'systemName': system_name, 'commandType': command_type},
+                          path='data.commandDefinition')
+
+    def command(self, id, fields=[]):
+        default_fields = ['id', 'commandType', 'fields']
+
+        graphql = """
+            query CommandQuery($id: ID!) {
+                command(id: $id) {
+                    %s
+                }
+            }
+        """ % ', '.join(set().union(default_fields, fields))
+
+        return self.query(graphql,
+                          variables={'id': id},
+                          path='data.command')
+
+    def gateway(self, name, fields=[]):
+        default_fields = ['id', 'name', 'connected']
+
+        graphql = """
+            query GatewayQuery($missionId: ID!, $name: String!) {
+                gateway(missionId: $missionId, name: $name) {
+                    %s
+                }
+            }
+        """ % ', '.join(set().union(default_fields, fields))
+
+        return self.query(graphql,
+                          variables={'missionId': self.mission_id(), 'name': name},
+                          path='data.gateway')
+
     def query(self, query, variables=None, operation_name=None, path=None):
         logger.debug(query)
         request = requests.post(f"{self.scheme}://{self.host}:{self.port}/script_api/v1/graphql",
@@ -96,7 +141,7 @@ class ScriptingApi:
         request.raise_for_status()
 
         json_result = request.json()
-        logger.debug(json.dumps(json_result, indent=4, sort_keys=True))
+        logger.debug(json.dumps(json_result, indent=2))
 
         if 'errors' in json_result:
             raise ApiError(request, json_result["errors"])
