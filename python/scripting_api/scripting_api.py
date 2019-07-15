@@ -1,6 +1,8 @@
 import requests
 import logging
 import json
+from scripting_api.mutations import Mutations
+
 
 logger = logging.getLogger(__name__)
 
@@ -27,6 +29,7 @@ class ScriptingApi:
         self.port = port
         self.basic_auth_username = basic_auth_username
         self.basic_auth_password = basic_auth_password
+        self.mutations = Mutations(self)
         self.script_info = None
         self.__fetch_script_info()
 
