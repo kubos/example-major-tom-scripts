@@ -15,10 +15,10 @@
 
 ## Usage
 
-View and run the example scripts.
+View, edit, and run the example scripts. You'll need to replace `YOUR_SCRIPT_TOKEN` with your Script's token.
 
 For example:
 
 ```bash
-python queue_and_execute_command.py
+python execute_command.py
 ```
