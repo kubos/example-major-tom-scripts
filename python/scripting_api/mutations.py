@@ -9,7 +9,7 @@ class Mutations:
         self.api = api
 
     def queue_and_execute_command(self, system_id, command_definition_id, gateway_id, fields, return_fields=[]):
-        default_fields = ['id', 'commandType', 'fields']
+        default_fields = ['id', 'commandType', 'fields', 'state']
 
         graphql = """
             mutation QueueAndExecuteCommand($systemId: ID!, $commandDefinitionId: ID!, $gatewayId: ID!, $fields: Json) {
@@ -32,7 +32,7 @@ class Mutations:
                               path='data.queueAndExecuteCommand')
 
     def queue_command(self, system_id, command_definition_id, gateway_id, fields, return_fields=[]):
-        default_fields = ['id', 'commandType', 'fields']
+        default_fields = ['id', 'commandType', 'fields', 'state']
 
         graphql = """
             mutation QueueCommand($systemId: ID!, $commandDefinitionId: ID!, $gatewayId: ID!, $fields: Json) {
@@ -55,7 +55,7 @@ class Mutations:
                               path='data.queueCommand')
 
     def execute_command(self, id, fields=[]):
-        default_fields = ['id', 'commandType', 'fields']
+        default_fields = ['id', 'commandType', 'fields', 'state']
 
         graphql = """
             mutation ExecuteCommand($id: ID!) {
@@ -73,7 +73,7 @@ class Mutations:
                               path='data.executeCommand')
 
     def cancel_command(self, id, fields=[]):
-        default_fields = ['id', 'commandType', 'fields']
+        default_fields = ['id', 'commandType', 'fields', 'state']
 
         graphql = """
             mutation CancelCommand($id: ID!) {

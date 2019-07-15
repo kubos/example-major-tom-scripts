@@ -85,7 +85,7 @@ class ScriptingApi:
                           path='data.metric')
 
     def command_definition(self, system_name, command_type, fields=[]):
-        default_fields = ['id', 'displayName', 'commandType', 'fields']
+        default_fields = ['id', 'displayName', 'commandType', 'fields', 'state']
 
         graphql = """
             query CommandDefinitionQuery($missionId: ID!, $systemName: String!, $commandType: String!) {
