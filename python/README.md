@@ -15,6 +15,10 @@
 
 ## Usage
 
+View and run the example scripts.
+
+For example:
+
 ```bash
-python pass.py
+python queue_and_execute_command.py
 ```

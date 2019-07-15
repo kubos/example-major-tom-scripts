@@ -100,7 +100,7 @@ class ScriptingApi:
                           path='data.commandDefinition')
 
     def command(self, id, fields=[]):
-        default_fields = ['id', 'commandType', 'fields']
+        default_fields = ['id', 'commandType', 'fields', 'state']
 
         graphql = """
             query CommandQuery($id: ID!) {
@@ -113,6 +113,29 @@ class ScriptingApi:
         return self.query(graphql,
                           variables={'id': id},
                           path='data.command')
+
+    def commands(self, system_id, states=[], first=10, after_cursor=None, fields=[]):
+        default_fields = ['id', 'commandType', 'fields', 'state']
+
+        graphql = """
+            query CommandsQuery($systemId: ID!, $states: [CommandState!], $first: Int!, $afterCursor: String) {
+                system(id: $systemId) {
+                    commands(filters: { state: $states }, orderBy: { sort: ID, direction: DESC }, first: $first, after: $afterCursor) {
+                        nodes {
+                            %s
+                        }
+                        pageInfo {
+                            hasNextPage, hasPreviousPage, startCursor, endCursor
+                        }
+                        totalCount
+                    }
+                }
+            }
+        """ % ', '.join(set().union(default_fields, fields))
+
+        return self.query(graphql,
+                          variables={'systemId': system_id, 'states': states, 'first': first, 'afterCursor': after_cursor},
+                          path='data.system.commands')
 
     def gateway(self, name, fields=[]):
         default_fields = ['id', 'name', 'connected']
