@@ -1,6 +1,7 @@
 import requests
 import logging
 import json
+import datetime
 from scripting_api.mutations import Mutations
 
 
@@ -120,7 +121,10 @@ class ScriptingApi:
         graphql = """
             query CommandsQuery($systemId: ID!, $states: [CommandState!], $first: Int!, $afterCursor: String) {
                 system(id: $systemId) {
-                    commands(filters: { state: $states }, orderBy: { sort: ID, direction: DESC }, first: $first, after: $afterCursor) {
+                    commands(filters: { state: $states },
+                             orderBy: { sort: ID, direction: DESC },
+                             first: $first,
+                             after: $afterCursor) {
                         nodes {
                             %s
                         }
@@ -151,6 +155,45 @@ class ScriptingApi:
         return self.query(graphql,
                           variables={'missionId': self.mission_id(), 'name': name},
                           path='data.gateway')
+
+    def events(self, system_id, levels=None, start_time=None, first=10, after_cursor=None, fields=[]):
+        if levels is None:
+            levels = ['debug', 'deprecated', 'nominal', 'warning', 'error', 'critical']
+
+        if start_time is None:
+            start_time = datetime.datetime.utcnow() - datetime.timedelta(minutes=15)
+
+        start_time_in_epoch_millis = (start_time - datetime.datetime.utcfromtimestamp(0)).total_seconds() * 1000.0
+
+        default_fields = ['id', 'type', 'message', 'level', 'timestamp']
+
+        graphql = """
+            query EventsQuery($missionId: ID!, $systemId: [ID!], $levels: [EventLevel!], $startTime: Time!, $first: Int!, $afterCursor: String) {
+                mission(id: $missionId) {
+                    events(filters: { systemId: $systemId, level: $levels, startTime: $startTime },
+                           orderBy: { sort: TIMESTAMP, direction: ASC },
+                           first: $first,
+                           after: $afterCursor) {
+                        nodes {
+                            %s
+                        }
+                        pageInfo {
+                            hasNextPage, hasPreviousPage, startCursor, endCursor
+                        }
+                        totalCount
+                    }
+                }
+            }
+        """ % ', '.join(set().union(default_fields, fields))
+
+        return self.query(graphql,
+                          variables={'missionId': self.mission_id(),
+                                     'systemId': [system_id],
+                                     'levels': levels,
+                                     'first': first,
+                                     'startTime': start_time_in_epoch_millis,
+                                     'afterCursor': after_cursor},
+                          path='data.mission.events')
 
     def query(self, query, variables=None, operation_name=None, path=None):
         logger.debug(query)
