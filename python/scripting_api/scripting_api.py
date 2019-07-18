@@ -51,9 +51,12 @@ class ScriptingApi:
             }
         """ % ', '.join(set().union(default_fields, fields))
 
-        return self.query(graphql,
-                          variables={'missionId': self.mission_id(), 'name': name},
-                          path='data.system')
+        result = self.query(graphql,
+                            variables={'missionId': self.mission_id(), 'name': name},
+                            path='data.system')
+        if result == None:
+            raise ApiError(f'No system of name "{name}" found.')
+        return result
 
     def subsystem(self, system_name, name, fields=[]):
         default_fields = ['id', 'name']
@@ -66,10 +69,13 @@ class ScriptingApi:
             }
         """ % ', '.join(set().union(default_fields, fields))
 
-        return self.query(graphql,
-                          variables={'missionId': self.mission_id(
-                          ), 'systemName': system_name, 'name': name},
-                          path='data.subsystem')
+        result = self.query(graphql,
+                            variables={'missionId': self.mission_id(
+                            ), 'systemName': system_name, 'name': name},
+                            path='data.subsystem')
+        if result == None:
+            raise ApiError(f'No subsystem of name "{name}" found on system "{system_name}"')
+        return result
 
     def metric(self, system_name, subsystem_name, name, fields=[]):
         default_fields = ['id', 'name']
@@ -86,9 +92,13 @@ class ScriptingApi:
                           variables={'missionId': self.mission_id(), 'systemName': system_name,
                                      'subsystemName': subsystem_name, 'name': name},
                           path='data.metric')
+        if result == None:
+            raise ApiError(
+                f'No metric "{name}" found on subsystem "{subsystem_name}" and system "{system_name}"')
+        return result
 
     def command_definition(self, system_name, command_type, fields=[]):
-        default_fields = ['id', 'displayName', 'commandType', 'fields', 'state']
+        default_fields = ['id', 'displayName', 'commandType', 'fields']
 
         graphql = """
             query CommandDefinitionQuery($missionId: ID!, $systemName: String!, $commandType: String!) {
@@ -98,10 +108,13 @@ class ScriptingApi:
             }
         """ % ', '.join(set().union(default_fields, fields))
 
-        return self.query(graphql,
-                          variables={'missionId': self.mission_id(), 'systemName': system_name,
-                                     'commandType': command_type},
-                          path='data.commandDefinition')
+        result = self.query(graphql,
+                            variables={'missionId': self.mission_id(), 'systemName': system_name,
+                                       'commandType': command_type},
+                            path='data.commandDefinition')
+        if result == None:
+            raise ApiError(f'No command defitinon "{command_type}" found on "{system_name}"')
+        return result
 
     def command(self, id, fields=[]):
         default_fields = ['id', 'commandType', 'fields', 'state']
@@ -114,9 +127,13 @@ class ScriptingApi:
             }
         """ % ', '.join(set().union(default_fields, fields))
 
-        return self.query(graphql,
-                          variables={'id': id},
-                          path='data.command')
+        result = self.query(graphql,
+                            variables={'id': id},
+                            path='data.command')
+
+        if result == None:
+            raise ApiError(f'No command with id "{id}" found.')
+        return result
 
     def commands(self, system_id, states=[], first=10, after_cursor=None, fields=[]):
         default_fields = ['id', 'commandType', 'fields', 'state']
@@ -156,9 +173,12 @@ class ScriptingApi:
             }
         """ % ', '.join(set().union(default_fields, fields))
 
-        return self.query(graphql,
-                          variables={'missionId': self.mission_id(), 'name': name},
-                          path='data.gateway')
+        result = self.query(graphql,
+                            variables={'missionId': self.mission_id(), 'name': name},
+                            path='data.gateway')
+        if result == None:
+            raise ApiError(f'No gateway of name "{name}" found.')
+        return result
 
     def events(self, system_id, levels=None, start_time=None, first=10, after_cursor=None, fields=[]):
         if levels is None:
