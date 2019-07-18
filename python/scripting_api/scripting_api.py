@@ -5,7 +5,6 @@ import datetime
 from scripting_api.mutations import Mutations
 from scripting_api.exceptions import QueryError, UnkownObjectError
 
-
 logger = logging.getLogger(__name__)
 
 
@@ -27,84 +26,131 @@ class ScriptingApi:
     def mission_id(self):
         return self.script_info['mission']['id']
 
-    def system(self, name, fields=[]):
+    def system(self, id=None, name=None, fields=[]):
+        """Lookup a system by id or name"""
+
         default_fields = ['id', 'name']
 
         graphql = """
-            query SystemQuery($missionId: ID!, $name: String!) {
-                system(missionId: $missionId, name: $name) {
+            query SystemQuery($id: ID, $missionId: ID, $name: String) {
+                system(id: $id, missionId: $missionId, name: $name) {
                     %s
                 }
             }
         """ % ', '.join(set().union(default_fields, fields))
 
         request = self.query(graphql,
-                             variables={'missionId': self.mission_id(), 'name': name},
+                             variables={
+                               'id': id,
+                               'missionId': self.mission_id(),
+                               'name': name
+                             },
                              path='data.system')
-        if request == None:
-            raise UnkownObjectError(object="system", name=name)
+
+        if request is None:
+            if id:
+                raise UnkownObjectError(object="system", id=id)
+            else:
+                raise UnkownObjectError(object="system", name=name)
+
         return request
 
-    def subsystem(self, system_name, name, fields=[]):
+    def subsystem(self, id=None, system_name=None, name=None, fields=[]):
+        """Lookup a subsystem by id or system_name and name"""
+
         default_fields = ['id', 'name']
 
         graphql = """
-            query SubsystemQuery($missionId: ID!, $systemName: String!, $name: String!) {
-                subsystem(missionId: $missionId, systemName: $systemName, name: $name) {
+            query SubsystemQuery($id: ID, $missionId: ID, $systemName: String, $name: String) {
+                subsystem(id: $id, missionId: $missionId, systemName: $systemName, name: $name) {
                     %s
                 }
             }
         """ % ', '.join(set().union(default_fields, fields))
 
         request = self.query(graphql,
-                             variables={'missionId': self.mission_id(
-                             ), 'systemName': system_name, 'name': name},
+                             variables={
+                               'id': id,
+                               'missionId': self.mission_id(),
+                               'systemName': system_name,
+                               'name': name
+                             },
                              path='data.subsystem')
-        if request == None:
-            raise UnkownObjectError(object="subsystem", name=name, parent=system_name)
+
+        if request is None:
+            if id:
+                raise UnkownObjectError(object="subsystem", id=id)
+            else:
+                raise UnkownObjectError(object="subsystem", name=name, parent=system_name)
+
         return request
 
-    def metric(self, system_name, subsystem_name, name, fields=[]):
+    def metric(self, id=None, system_name=None, subsystem_name=None, name=None, fields=[]):
+        """Lookup a metric by id or system_name, subsystem_name, and name"""
+
         default_fields = ['id', 'name']
 
         graphql = """
-            query MetricQuery($missionId: ID!, $systemName: String!, $subsystemName: String!, $name: String!) {
-                metric(missionId: $missionId, systemName: $systemName, subsystemName: $subsystemName, name: $name) {
+            query MetricQuery($id: ID, $missionId: ID, $systemName: String, $subsystemName: String, $name: String) {
+                metric(id: $id, missionId: $missionId, systemName: $systemName, subsystemName: $subsystemName, name: $name) {
                     %s
                 }
             }
         """ % ', '.join(set().union(default_fields, fields))
 
         request = self.query(graphql,
-                             variables={'missionId': self.mission_id(), 'systemName': system_name,
-                                        'subsystemName': subsystem_name, 'name': name},
+                             variables={
+                                 'id': id,
+                                 'missionId': self.mission_id(),
+                                 'systemName': system_name,
+                                 'subsystemName': subsystem_name,
+                                 'name': name},
                              path='data.metric')
-        if request == None:
-            raise UnkownObjectError(object="metric", name=name, parent=subsystem_name)
+
+        if request is None:
+            if id:
+                raise UnkownObjectError(object="metric", id=id)
+            else:
+                raise UnkownObjectError(object="metric", name=name, parent=subsystem_name)
+
         return request
 
-    def command_definition(self, system_name, command_type, fields=[]):
+    def command_definition(self, id=None, system_name=None, command_type=None, fields=[]):
+        """Lookup a command definition by id or system_name and command type"""
+
         default_fields = ['id', 'displayName', 'commandType', 'fields']
 
         graphql = """
-            query CommandDefinitionQuery($missionId: ID!, $systemName: String!, $commandType: String!) {
-                commandDefinition(missionId: $missionId, systemName: $systemName, commandType: $commandType) {
+            query CommandDefinitionQuery($id: ID,$missionId: ID, $systemName: String, $commandType: String) {
+                commandDefinition(id: $id, missionId: $missionId, systemName: $systemName, commandType: $commandType) {
                     %s
                 }
             }
         """ % ', '.join(set().union(default_fields, fields))
 
         request = self.query(graphql,
-                             variables={'missionId': self.mission_id(), 'systemName': system_name,
-                                        'commandType': command_type},
+                             variables={
+                                 'id': id,
+                                 'missionId': self.mission_id(),
+                                 'systemName': system_name,
+                                 'commandType': command_type
+                             },
                              path='data.commandDefinition')
-        if request == None:
-            raise UnkownObjectError(object="command_definition",
-                                    name=command_type,
-                                    parent=system_name)
+
+        if request is None:
+            if id:
+                raise UnkownObjectError(object="command_definition",
+                                        id=id)
+            else:
+                raise UnkownObjectError(object="command_definition",
+                                        name=command_type,
+                                        parent=system_name)
+
         return request
 
     def command(self, id, fields=[]):
+        """Lookup a command by id"""
+
         default_fields = ['id', 'commandType', 'fields', 'state']
 
         graphql = """
@@ -119,11 +165,14 @@ class ScriptingApi:
                              variables={'id': id},
                              path='data.command')
 
-        if request == None:
+        if request is None:
             raise UnkownObjectError(object="command", id=id)
+
         return request
 
     def commands(self, system_id, states=[], first=10, after_cursor=None, fields=[]):
+        """Lookup commands by system_id"""
+
         default_fields = ['id', 'commandType', 'fields', 'state']
 
         graphql = """
@@ -150,33 +199,45 @@ class ScriptingApi:
                                      'first': first, 'afterCursor': after_cursor},
                           path='data.system.commands')
 
-    def gateway(self, name, fields=[]):
+    def gateway(self, id=None, name=None, fields=[]):
+        """Lookup a gateway by id or name"""
+
         default_fields = ['id', 'name', 'connected']
 
         graphql = """
-            query GatewayQuery($missionId: ID!, $name: String!) {
-                gateway(missionId: $missionId, name: $name) {
+            query GatewayQuery($id: ID, $missionId: ID, $name: String) {
+                gateway(id: $id, missionId: $missionId, name: $name) {
                     %s
                 }
             }
         """ % ', '.join(set().union(default_fields, fields))
 
         request = self.query(graphql,
-                             variables={'missionId': self.mission_id(), 'name': name},
+                             variables={
+                                 'id': id,
+                                 'missionId': self.mission_id(),
+                                 'name': name
+                             },
                              path='data.gateway')
-        if request == None:
-            raise UnkownObjectError(object="gateway", name=name)
+
+        if request is None:
+            if id:
+                raise UnkownObjectError(object="gateway", id=id)
+            else:
+                raise UnkownObjectError(object="gateway", name=name)
+
         return request
 
     def events(self, system_id, levels=None, start_time=None, first=10, after_cursor=None, fields=[]):
+        """Lookup events by system_id"""
+
         if levels is None:
             levels = ['debug', 'deprecated', 'nominal', 'warning', 'error', 'critical']
 
         if start_time is None:
             start_time = datetime.datetime.utcnow() - datetime.timedelta(minutes=15)
 
-        start_time_in_epoch_millis = (
-            start_time - datetime.datetime.utcfromtimestamp(0)).total_seconds() * 1000.0
+        start_time_in_epoch_millis = (start_time - datetime.datetime.utcfromtimestamp(0)).total_seconds() * 1000.0
 
         default_fields = ['id', 'type', 'message', 'level', 'timestamp']
 
@@ -210,10 +271,11 @@ class ScriptingApi:
 
     def query(self, query, variables=None, operation_name=None, path=None):
         logger.debug(query)
-        if self.port == None:
+        if self.port is None:
             url = f"{self.scheme}://{self.host}/script_api/v1/graphql"
         else:
             url = f"{self.scheme}://{self.host}:{self.port}/script_api/v1/graphql"
+
         request = requests.post(url,
                                 auth=(self.basic_auth_username, self.basic_auth_password),
                                 headers={

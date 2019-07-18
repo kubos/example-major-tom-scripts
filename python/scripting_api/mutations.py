@@ -10,7 +10,7 @@ class Mutations:
     def __init__(self, api):
         self.api = api
 
-    def queue_and_execute_command(self, system_id, command_definition_id, gateway_id, fields={}, return_fields=[]):
+    def queue_and_execute_command(self, system_id, command_definition_id, gateway_id, fields={}, return_fields=[], raise_on_error=True):
         default_fields = ['id', 'commandType', 'fields', 'state']
 
         graphql = """
@@ -39,7 +39,7 @@ class Mutations:
         logger.info(request["notice"])
         return request
 
-    def queue_command(self, system_id, command_definition_id, gateway_id, fields={}, return_fields=[]):
+    def queue_command(self, system_id, command_definition_id, gateway_id, fields={}, return_fields=[], raise_on_error=True):
         default_fields = ['id', 'commandType', 'fields', 'state']
 
         graphql = """
