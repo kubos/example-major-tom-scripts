@@ -76,7 +76,7 @@ logger.info(f'Staged Filed to Uplink: {system["stagedFiles"]["edges"][0]["node"]
 # Set all the commands we want to run except the final downlink_file command, as it depends on getting the refreshed file list
 commands = [
     {"connect": {}},
-    {"telemetry": {"fields": {"mode": "NOMINAL", "duration": 30}}},
+    {"telemetry": {"fields": {"mode": "NOMINAL", "duration": 60}}},
     {"uplink_file": {"fields": {
         "gateway_download_path": system["stagedFiles"]["edges"][0]["node"]["downloadPath"]}}},
     {"update_file_list": {}}
