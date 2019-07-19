@@ -3,23 +3,10 @@ import logging
 import json
 import datetime
 from scripting_api.mutations import Mutations
+from scripting_api.exceptions import QueryError, UnkownObjectError
 
 
 logger = logging.getLogger(__name__)
-
-
-class Error(Exception):
-    """Base class for other exceptions"""
-    pass
-
-
-class ApiError(Error):
-    """Raised when the GraphQL request is unparsable or other server-side errors are encountered."""
-
-    def __init___(self, request, errors):
-        super(ApiError, self).__init__(f"From server: {errors}")
-        self.request = request
-        self.errors = errors
 
 
 class ScriptingApi:
@@ -51,12 +38,12 @@ class ScriptingApi:
             }
         """ % ', '.join(set().union(default_fields, fields))
 
-        result = self.query(graphql,
-                            variables={'missionId': self.mission_id(), 'name': name},
-                            path='data.system')
-        if result == None:
-            raise ApiError(f'No system of name "{name}" found.')
-        return result
+        request = self.query(graphql,
+                             variables={'missionId': self.mission_id(), 'name': name},
+                             path='data.system')
+        if request == None:
+            raise UnkownObjectError(object="system", name=name)
+        return request
 
     def subsystem(self, system_name, name, fields=[]):
         default_fields = ['id', 'name']
@@ -69,13 +56,13 @@ class ScriptingApi:
             }
         """ % ', '.join(set().union(default_fields, fields))
 
-        result = self.query(graphql,
-                            variables={'missionId': self.mission_id(
-                            ), 'systemName': system_name, 'name': name},
-                            path='data.subsystem')
-        if result == None:
-            raise ApiError(f'No subsystem of name "{name}" found on system "{system_name}"')
-        return result
+        request = self.query(graphql,
+                             variables={'missionId': self.mission_id(
+                             ), 'systemName': system_name, 'name': name},
+                             path='data.subsystem')
+        if request == None:
+            raise UnkownObjectError(object="subsystem", name=name, parent=system_name)
+        return request
 
     def metric(self, system_name, subsystem_name, name, fields=[]):
         default_fields = ['id', 'name']
@@ -88,14 +75,13 @@ class ScriptingApi:
             }
         """ % ', '.join(set().union(default_fields, fields))
 
-        return self.query(graphql,
-                          variables={'missionId': self.mission_id(), 'systemName': system_name,
-                                     'subsystemName': subsystem_name, 'name': name},
-                          path='data.metric')
-        if result == None:
-            raise ApiError(
-                f'No metric "{name}" found on subsystem "{subsystem_name}" and system "{system_name}"')
-        return result
+        request = self.query(graphql,
+                             variables={'missionId': self.mission_id(), 'systemName': system_name,
+                                        'subsystemName': subsystem_name, 'name': name},
+                             path='data.metric')
+        if request == None:
+            raise UnkownObjectError(object="metric", name=name, parent=subsystem_name)
+        return request
 
     def command_definition(self, system_name, command_type, fields=[]):
         default_fields = ['id', 'displayName', 'commandType', 'fields']
@@ -108,13 +94,15 @@ class ScriptingApi:
             }
         """ % ', '.join(set().union(default_fields, fields))
 
-        result = self.query(graphql,
-                            variables={'missionId': self.mission_id(), 'systemName': system_name,
-                                       'commandType': command_type},
-                            path='data.commandDefinition')
-        if result == None:
-            raise ApiError(f'No command defitinon "{command_type}" found on "{system_name}"')
-        return result
+        request = self.query(graphql,
+                             variables={'missionId': self.mission_id(), 'systemName': system_name,
+                                        'commandType': command_type},
+                             path='data.commandDefinition')
+        if request == None:
+            raise UnkownObjectError(object="command_definition",
+                                    name=command_type,
+                                    parent=system_name)
+        return request
 
     def command(self, id, fields=[]):
         default_fields = ['id', 'commandType', 'fields', 'state']
@@ -127,13 +115,13 @@ class ScriptingApi:
             }
         """ % ', '.join(set().union(default_fields, fields))
 
-        result = self.query(graphql,
-                            variables={'id': id},
-                            path='data.command')
+        request = self.query(graphql,
+                             variables={'id': id},
+                             path='data.command')
 
-        if result == None:
-            raise ApiError(f'No command with id "{id}" found.')
-        return result
+        if request == None:
+            raise UnkownObjectError(object="command", id=id)
+        return request
 
     def commands(self, system_id, states=[], first=10, after_cursor=None, fields=[]):
         default_fields = ['id', 'commandType', 'fields', 'state']
@@ -173,12 +161,12 @@ class ScriptingApi:
             }
         """ % ', '.join(set().union(default_fields, fields))
 
-        result = self.query(graphql,
-                            variables={'missionId': self.mission_id(), 'name': name},
-                            path='data.gateway')
-        if result == None:
-            raise ApiError(f'No gateway of name "{name}" found.')
-        return result
+        request = self.query(graphql,
+                             variables={'missionId': self.mission_id(), 'name': name},
+                             path='data.gateway')
+        if request == None:
+            raise UnkownObjectError(object="gateway", name=name)
+        return request
 
     def events(self, system_id, levels=None, start_time=None, first=10, after_cursor=None, fields=[]):
         if levels is None:
@@ -242,7 +230,7 @@ class ScriptingApi:
         logger.debug(json.dumps(json_result, indent=2))
 
         if 'errors' in json_result:
-            raise ApiError(request, json_result["errors"])
+            raise QueryError(request=request, errors=json_result["errors"])
 
         if path:
             for s in path.split('.'):
