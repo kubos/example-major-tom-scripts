@@ -3,7 +3,7 @@ import logging
 import json
 import datetime
 from scripting_api.mutations import Mutations
-from scripting_api.exceptions import QueryError, UnkownObjectError
+from scripting_api.exceptions import QueryError, UnknownObjectError
 
 logger = logging.getLogger(__name__)
 
@@ -49,9 +49,9 @@ class ScriptingApi:
 
         if request is None:
             if id:
-                raise UnkownObjectError(object="system", id=id)
+                raise UnknownObjectError(object="system", id=id)
             else:
-                raise UnkownObjectError(object="system", name=name)
+                raise UnknownObjectError(object="system", name=name)
 
         return request
 
@@ -79,9 +79,9 @@ class ScriptingApi:
 
         if request is None:
             if id:
-                raise UnkownObjectError(object="subsystem", id=id)
+                raise UnknownObjectError(object="subsystem", id=id)
             else:
-                raise UnkownObjectError(object="subsystem", name=name, parent=system_name)
+                raise UnknownObjectError(object="subsystem", name=name, parent=system_name)
 
         return request
 
@@ -109,9 +109,9 @@ class ScriptingApi:
 
         if request is None:
             if id:
-                raise UnkownObjectError(object="metric", id=id)
+                raise UnknownObjectError(object="metric", id=id)
             else:
-                raise UnkownObjectError(object="metric", name=name, parent=subsystem_name)
+                raise UnknownObjectError(object="metric", name=name, parent=subsystem_name)
 
         return request
 
@@ -139,10 +139,10 @@ class ScriptingApi:
 
         if request is None:
             if id:
-                raise UnkownObjectError(object="command_definition",
+                raise UnknownObjectError(object="command_definition",
                                         id=id)
             else:
-                raise UnkownObjectError(object="command_definition",
+                raise UnknownObjectError(object="command_definition",
                                         name=command_type,
                                         parent=system_name)
 
@@ -166,7 +166,7 @@ class ScriptingApi:
                              path='data.command')
 
         if request is None:
-            raise UnkownObjectError(object="command", id=id)
+            raise UnknownObjectError(object="command", id=id)
 
         return request
 
@@ -222,9 +222,9 @@ class ScriptingApi:
 
         if request is None:
             if id:
-                raise UnkownObjectError(object="gateway", id=id)
+                raise UnknownObjectError(object="gateway", id=id)
             else:
-                raise UnkownObjectError(object="gateway", name=name)
+                raise UnknownObjectError(object="gateway", name=name)
 
         return request
 

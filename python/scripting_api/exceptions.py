@@ -27,7 +27,7 @@ class MutationError(ApiError):
         super().__init__(f"{request['notice']}: {request['errors']}")
 
 
-class UnkownObjectError(ApiError):
+class UnknownObjectError(ApiError):
     """
     Raised when a query for a single item returns a null (nothing found).
     ".object" is the type of object being retrieved.
