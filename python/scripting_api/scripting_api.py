@@ -3,7 +3,7 @@ import logging
 import json
 import datetime
 from scripting_api.mutations import Mutations
-from scripting_api.exceptions import QueryError, NoMatchError
+from scripting_api.exceptions import QueryError, UnkownObjectError
 
 
 logger = logging.getLogger(__name__)
@@ -42,7 +42,7 @@ class ScriptingApi:
                              variables={'missionId': self.mission_id(), 'name': name},
                              path='data.system')
         if request == None:
-            raise NoMatchError(object="system", key=name)
+            raise UnkownObjectError(object="system", name=name)
         return request
 
     def subsystem(self, system_name, name, fields=[]):
@@ -61,7 +61,7 @@ class ScriptingApi:
                              ), 'systemName': system_name, 'name': name},
                              path='data.subsystem')
         if request == None:
-            raise NoMatchError(object="subsystem", key=name, parent=system_name)
+            raise UnkownObjectError(object="subsystem", name=name, parent=system_name)
         return request
 
     def metric(self, system_name, subsystem_name, name, fields=[]):
@@ -80,7 +80,7 @@ class ScriptingApi:
                                         'subsystemName': subsystem_name, 'name': name},
                              path='data.metric')
         if request == None:
-            raise NoMatchError(object="metric", key=name, parent=subsystem_name)
+            raise UnkownObjectError(object="metric", name=name, parent=subsystem_name)
         return request
 
     def command_definition(self, system_name, command_type, fields=[]):
@@ -99,7 +99,9 @@ class ScriptingApi:
                                         'commandType': command_type},
                              path='data.commandDefinition')
         if request == None:
-            raise NoMatchError(object="command_definition", key=name, parent=system_name)
+            raise UnkownObjectError(object="command_definition",
+                                    name=command_type,
+                                    parent=system_name)
         return request
 
     def command(self, id, fields=[]):
@@ -118,7 +120,7 @@ class ScriptingApi:
                              path='data.command')
 
         if request == None:
-            raise NoMatchError(object="command", key=id)
+            raise UnkownObjectError(object="command", id=id)
         return request
 
     def commands(self, system_id, states=[], first=10, after_cursor=None, fields=[]):
@@ -163,7 +165,7 @@ class ScriptingApi:
                              variables={'missionId': self.mission_id(), 'name': name},
                              path='data.gateway')
         if request == None:
-            raise NoMatchError(object="gateway", key=name)
+            raise UnkownObjectError(object="gateway", name=name)
         return request
 
     def events(self, system_id, levels=None, start_time=None, first=10, after_cursor=None, fields=[]):

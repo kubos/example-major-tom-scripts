@@ -27,20 +27,24 @@ class MutationError(ApiError):
         super().__init__(f"{request['notice']}: {request['errors']}")
 
 
-class NoMatchError(ApiError):
+class UnkownObjectError(ApiError):
     """
-    Raised when a query for a single item returns a null (nothing matched).
-    ".key" is the key used to retrieve it, such as a name or ID.
+    Raised when a query for a single item returns a null (nothing found).
+    ".object" is the type of object being retrieved.
+    ".id" is the ID used to retrieve it.
+    ".name" is the name used to retrieve it.
     ".parent" is the parent object it should be on, "None" if it has no parent.
-    ".request" contains the raw request response.
     """
 
-    def __init__(self, object: str, key, parent=None):
+    def __init__(self, object: str, id=None, name=None, parent=None):
         self.object = object
-        self.key = key
+        self.id = id
+        self.name = name
         self.parent = parent
-        if parent != None:
-            message = f'No "{object}" found with key "{key}" under parent "{parent}"'
+        if id:
+            message = f'No "{object}" found with id "{id}"'
         else:
-            message = f'No "{object}" found with key "{key}"'
+            message = f'No "{object}" found with name "{name}"'
+        if parent:
+            message += f' under parent "{parent}"'
         super().__init__(message)
