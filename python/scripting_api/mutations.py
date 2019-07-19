@@ -1,19 +1,16 @@
 import logging
 import json
 
+from scripting_api.exceptions import MutationError
+
 logger = logging.getLogger(__name__)
-
-
-class MutationError(Exception):
-    """Raised when a Mutation Fails"""
-    pass
 
 
 class Mutations:
     def __init__(self, api):
         self.api = api
 
-    def queue_and_execute_command(self, system_id, command_definition_id, gateway_id, fields, return_fields=[]):
+    def queue_and_execute_command(self, system_id, command_definition_id, gateway_id, fields={}, return_fields=[]):
         default_fields = ['id', 'commandType', 'fields', 'state']
 
         graphql = """
@@ -27,19 +24,20 @@ class Mutations:
             }
         """ % ', '.join(set().union(default_fields, return_fields))
 
-        result = self.api.query(graphql,
-                                variables={
-                                    'systemId': system_id,
-                                    'commandDefinitionId': command_definition_id,
-                                    'gatewayId': gateway_id,
-                                    'fields': json.dumps(fields)
-                                },
-                                path='data.queueAndExecuteCommand')
-        logger.info(result["notice"])
-        if not result["success"]:
-            raise(MutationError(f"{result['notice']}: {result['errors']}"))
+        request = self.api.query(graphql,
+                                 variables={
+                                     'systemId': system_id,
+                                     'commandDefinitionId': command_definition_id,
+                                     'gatewayId': gateway_id,
+                                     'fields': json.dumps(fields)
+                                 },
+                                 path='data.queueAndExecuteCommand')
 
-        return result
+        if not request["success"]:
+            raise(MutationError(request=request))
+
+        logger.info(request["notice"])
+        return request
 
     def queue_command(self, system_id, command_definition_id, gateway_id, fields={}, return_fields=[]):
         default_fields = ['id', 'commandType', 'fields', 'state']
@@ -55,21 +53,22 @@ class Mutations:
             }
         """ % ', '.join(set().union(default_fields, return_fields))
 
-        result = self.api.query(graphql,
-                                variables={
-                                    'systemId': system_id,
-                                    'commandDefinitionId': command_definition_id,
-                                    'gatewayId': gateway_id,
-                                    'fields': json.dumps(fields)
-                                },
-                                path='data.queueCommand')
-        logger.info(result["notice"])
-        if not result["success"]:
-            raise(MutationError(f"{result['notice']}: {result['errors']}"))
+        request = self.api.query(graphql,
+                                 variables={
+                                     'systemId': system_id,
+                                     'commandDefinitionId': command_definition_id,
+                                     'gatewayId': gateway_id,
+                                     'fields': json.dumps(fields)
+                                 },
+                                 path='data.queueCommand')
 
-        return result
+        if not request["success"]:
+            raise(MutationError(request=request))
 
-    def execute_command(self, id, fields=[]):
+        logger.info(request["notice"])
+        return request
+
+    def execute_command(self, id, return_fields=[]):
         default_fields = ['id', 'commandType', 'fields', 'state']
 
         graphql = """
@@ -81,18 +80,19 @@ class Mutations:
                     }
                 }
             }
-        """ % ', '.join(set().union(default_fields, fields))
+        """ % ', '.join(set().union(default_fields, return_fields))
 
-        result = self.api.query(graphql,
-                                variables={'id': id},
-                                path='data.executeCommand')
-        logger.info(result["notice"])
-        if not result["success"]:
-            raise(MutationError(f"{result['notice']}: {result['errors']}"))
+        request = self.api.query(graphql,
+                                 variables={'id': id},
+                                 path='data.executeCommand')
 
-        return result
+        if not request["success"]:
+            raise(MutationError(request=request))
 
-    def cancel_command(self, id, fields=[]):
+        logger.info(request["notice"])
+        return request
+
+    def cancel_command(self, id, return_fields=[]):
         default_fields = ['id', 'commandType', 'fields', 'state']
 
         graphql = """
@@ -104,14 +104,14 @@ class Mutations:
                     }
                 }
             }
-        """ % ', '.join(set().union(default_fields, fields))
+        """ % ', '.join(set().union(default_fields, return_fields))
 
-        result = self.api.query(graphql,
-                                variables={'id': id},
-                                path='data.cancelCommand')
+        request = self.api.query(graphql,
+                                 variables={'id': id},
+                                 path='data.cancelCommand')
 
-        logger.info(result["notice"])
-        if not result["success"]:
-            raise(MutationError(f"{result['notice']}: {result['errors']}"))
+        if not request["success"]:
+            raise(MutationError(request=request))
 
-        return result
+        logger.info(request["notice"])
+        return request
