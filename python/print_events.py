@@ -16,10 +16,6 @@ api = ScriptingApi(host="app.majortom.cloud",
 
 system = api.system(name="Satellite0")
 
-if not system:
-    print("Unable to find system Satellite0")
-    sys.exit(1)
-
 # Look for events starting now.
 start_time = datetime.datetime.utcnow()
 
