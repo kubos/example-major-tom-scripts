@@ -26,7 +26,7 @@ class ScriptingApi:
     def mission_id(self):
         return self.script_info['mission']['id']
 
-    def system(self, id=None, name=None, fields=[]):
+    def system(self, id=None, name=None, return_fields=[]):
         """Lookup a system by id or name"""
 
         default_fields = ['id', 'name']
@@ -37,7 +37,7 @@ class ScriptingApi:
                     %s
                 }
             }
-        """ % ', '.join(set().union(default_fields, fields))
+        """ % ', '.join(set().union(default_fields, return_fields))
 
         request = self.query(graphql,
                              variables={
@@ -55,7 +55,7 @@ class ScriptingApi:
 
         return request
 
-    def subsystem(self, id=None, system_name=None, name=None, fields=[]):
+    def subsystem(self, id=None, system_name=None, name=None, return_fields=[]):
         """Lookup a subsystem by id or system_name and name"""
 
         default_fields = ['id', 'name']
@@ -66,7 +66,7 @@ class ScriptingApi:
                     %s
                 }
             }
-        """ % ', '.join(set().union(default_fields, fields))
+        """ % ', '.join(set().union(default_fields, return_fields))
 
         request = self.query(graphql,
                              variables={
@@ -85,7 +85,7 @@ class ScriptingApi:
 
         return request
 
-    def metric(self, id=None, system_name=None, subsystem_name=None, name=None, fields=[]):
+    def metric(self, id=None, system_name=None, subsystem_name=None, name=None, return_fields=[]):
         """Lookup a metric by id or system_name, subsystem_name, and name"""
 
         default_fields = ['id', 'name']
@@ -96,7 +96,7 @@ class ScriptingApi:
                     %s
                 }
             }
-        """ % ', '.join(set().union(default_fields, fields))
+        """ % ', '.join(set().union(default_fields, return_fields))
 
         request = self.query(graphql,
                              variables={
@@ -115,7 +115,7 @@ class ScriptingApi:
 
         return request
 
-    def command_definition(self, id=None, system_name=None, command_type=None, fields=[]):
+    def command_definition(self, id=None, system_name=None, command_type=None, return_fields=[]):
         """Lookup a command definition by id or system_name and command type"""
 
         default_fields = ['id', 'displayName', 'commandType', 'fields']
@@ -126,7 +126,7 @@ class ScriptingApi:
                     %s
                 }
             }
-        """ % ', '.join(set().union(default_fields, fields))
+        """ % ', '.join(set().union(default_fields, return_fields))
 
         request = self.query(graphql,
                              variables={
@@ -148,7 +148,7 @@ class ScriptingApi:
 
         return request
 
-    def command(self, id, fields=[]):
+    def command(self, id, return_fields=[]):
         """Lookup a command by id"""
 
         default_fields = ['id', 'commandType', 'fields', 'state']
@@ -159,7 +159,7 @@ class ScriptingApi:
                     %s
                 }
             }
-        """ % ', '.join(set().union(default_fields, fields))
+        """ % ', '.join(set().union(default_fields, return_fields))
 
         request = self.query(graphql,
                              variables={'id': id},
@@ -170,7 +170,7 @@ class ScriptingApi:
 
         return request
 
-    def commands(self, system_id, states=[], first=10, after_cursor=None, fields=[]):
+    def commands(self, system_id, states=[], first=10, after_cursor=None, return_fields=[]):
         """Lookup commands by system_id"""
 
         default_fields = ['id', 'commandType', 'fields', 'state']
@@ -192,14 +192,14 @@ class ScriptingApi:
                     }
                 }
             }
-        """ % ', '.join(set().union(default_fields, fields))
+        """ % ', '.join(set().union(default_fields, return_fields))
 
         return self.query(graphql,
                           variables={'systemId': system_id, 'states': states,
                                      'first': first, 'afterCursor': after_cursor},
                           path='data.system.commands')
 
-    def gateway(self, id=None, name=None, fields=[]):
+    def gateway(self, id=None, name=None, return_fields=[]):
         """Lookup a gateway by id or name"""
 
         default_fields = ['id', 'name', 'connected']
@@ -210,7 +210,7 @@ class ScriptingApi:
                     %s
                 }
             }
-        """ % ', '.join(set().union(default_fields, fields))
+        """ % ', '.join(set().union(default_fields, return_fields))
 
         request = self.query(graphql,
                              variables={
@@ -228,7 +228,7 @@ class ScriptingApi:
 
         return request
 
-    def events(self, system_id, levels=None, start_time=None, first=10, after_cursor=None, fields=[]):
+    def events(self, system_id, levels=None, start_time=None, first=10, after_cursor=None, return_fields=[]):
         """Lookup events by system_id"""
 
         if levels is None:
@@ -258,7 +258,7 @@ class ScriptingApi:
                     }
                 }
             }
-        """ % ', '.join(set().union(default_fields, fields))
+        """ % ', '.join(set().union(default_fields, return_fields))
 
         return self.query(graphql,
                           variables={'missionId': self.mission_id(),
