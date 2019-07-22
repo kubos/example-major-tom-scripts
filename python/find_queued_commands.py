@@ -15,10 +15,6 @@ api = ScriptingApi(host="app.majortom.cloud",
 
 system = api.system(name="Satellite0")
 
-if not system:
-    print("Unable to find system Satellite0")
-    sys.exit(1)
-
 # Find the newest queued command on this system.
 commands = api.commands(system_id=system["id"], first=1, states=['queued'])
 
