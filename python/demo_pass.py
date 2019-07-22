@@ -66,7 +66,7 @@ api = ScriptingApi(host=args.majortomhost,
 
 # Retrieve Gateway and System (with current staged files)
 gateway = api.gateway(name="Demo")
-system = api.system(name="Space Oddity", fields=[
+system = api.system(name="Space Oddity", return_fields=[
                     "stagedFiles {edges {node {id,name,downloadPath}}}"])
 
 # Make sure a staged file is there to uplink. We're just pulling the latest one uploaded.
@@ -128,7 +128,7 @@ if not cancel:
         command_type="downlink_file")
 
     # Get the remoteFileList
-    system = api.system(name=system["name"], fields=["remoteFileList {files,timestamp}"])
+    system = api.system(name=system["name"], return_fields=["remoteFileList {files,timestamp}"])
 
     # Returned as a string, so we make it into a python list of dicts and pull out the name of the latest.
     # You should analyze the timestamp to pull out the latest, but we have control of the gateway, which has it nicely ordered for us already.

@@ -27,7 +27,7 @@ class ScriptingApi:
     def mission_id(self):
         return self.script_info['mission']['id']
 
-    def system(self, name, fields=[]):
+    def system(self, name, return_fields=[]):
         default_fields = ['id', 'name']
 
         graphql = """
@@ -36,7 +36,7 @@ class ScriptingApi:
                     %s
                 }
             }
-        """ % ', '.join(set().union(default_fields, fields))
+        """ % ', '.join(set().union(default_fields, return_fields))
 
         request = self.query(graphql,
                              variables={'missionId': self.mission_id(), 'name': name},
@@ -45,7 +45,7 @@ class ScriptingApi:
             raise UnkownObjectError(object="system", name=name)
         return request
 
-    def subsystem(self, system_name, name, fields=[]):
+    def subsystem(self, system_name, name, return_fields=[]):
         default_fields = ['id', 'name']
 
         graphql = """
@@ -54,7 +54,7 @@ class ScriptingApi:
                     %s
                 }
             }
-        """ % ', '.join(set().union(default_fields, fields))
+        """ % ', '.join(set().union(default_fields, return_fields))
 
         request = self.query(graphql,
                              variables={'missionId': self.mission_id(
@@ -64,7 +64,7 @@ class ScriptingApi:
             raise UnkownObjectError(object="subsystem", name=name, parent=system_name)
         return request
 
-    def metric(self, system_name, subsystem_name, name, fields=[]):
+    def metric(self, system_name, subsystem_name, name, return_fields=[]):
         default_fields = ['id', 'name']
 
         graphql = """
@@ -73,7 +73,7 @@ class ScriptingApi:
                     %s
                 }
             }
-        """ % ', '.join(set().union(default_fields, fields))
+        """ % ', '.join(set().union(default_fields, return_fields))
 
         request = self.query(graphql,
                              variables={'missionId': self.mission_id(), 'systemName': system_name,
@@ -83,7 +83,7 @@ class ScriptingApi:
             raise UnkownObjectError(object="metric", name=name, parent=subsystem_name)
         return request
 
-    def command_definition(self, system_name, command_type, fields=[]):
+    def command_definition(self, system_name, command_type, return_fields=[]):
         default_fields = ['id', 'displayName', 'commandType', 'fields']
 
         graphql = """
@@ -92,7 +92,7 @@ class ScriptingApi:
                     %s
                 }
             }
-        """ % ', '.join(set().union(default_fields, fields))
+        """ % ', '.join(set().union(default_fields, return_fields))
 
         request = self.query(graphql,
                              variables={'missionId': self.mission_id(), 'systemName': system_name,
@@ -104,7 +104,7 @@ class ScriptingApi:
                                     parent=system_name)
         return request
 
-    def command(self, id, fields=[]):
+    def command(self, id, return_fields=[]):
         default_fields = ['id', 'commandType', 'fields', 'state']
 
         graphql = """
@@ -113,7 +113,7 @@ class ScriptingApi:
                     %s
                 }
             }
-        """ % ', '.join(set().union(default_fields, fields))
+        """ % ', '.join(set().union(default_fields, return_fields))
 
         request = self.query(graphql,
                              variables={'id': id},
@@ -123,7 +123,7 @@ class ScriptingApi:
             raise UnkownObjectError(object="command", id=id)
         return request
 
-    def commands(self, system_id, states=[], first=10, after_cursor=None, fields=[]):
+    def commands(self, system_id, states=[], first=10, after_cursor=None, return_fields=[]):
         default_fields = ['id', 'commandType', 'fields', 'state']
 
         graphql = """
@@ -143,14 +143,14 @@ class ScriptingApi:
                     }
                 }
             }
-        """ % ', '.join(set().union(default_fields, fields))
+        """ % ', '.join(set().union(default_fields, return_fields))
 
         return self.query(graphql,
                           variables={'systemId': system_id, 'states': states,
                                      'first': first, 'afterCursor': after_cursor},
                           path='data.system.commands')
 
-    def gateway(self, name, fields=[]):
+    def gateway(self, name, return_fields=[]):
         default_fields = ['id', 'name', 'connected']
 
         graphql = """
@@ -159,7 +159,7 @@ class ScriptingApi:
                     %s
                 }
             }
-        """ % ', '.join(set().union(default_fields, fields))
+        """ % ', '.join(set().union(default_fields, return_fields))
 
         request = self.query(graphql,
                              variables={'missionId': self.mission_id(), 'name': name},
@@ -168,7 +168,7 @@ class ScriptingApi:
             raise UnkownObjectError(object="gateway", name=name)
         return request
 
-    def events(self, system_id, levels=None, start_time=None, first=10, after_cursor=None, fields=[]):
+    def events(self, system_id, levels=None, start_time=None, first=10, after_cursor=None, return_fields=[]):
         if levels is None:
             levels = ['debug', 'deprecated', 'nominal', 'warning', 'error', 'critical']
 
@@ -197,7 +197,7 @@ class ScriptingApi:
                     }
                 }
             }
-        """ % ', '.join(set().union(default_fields, fields))
+        """ % ', '.join(set().union(default_fields, return_fields))
 
         return self.query(graphql,
                           variables={'missionId': self.mission_id(),
