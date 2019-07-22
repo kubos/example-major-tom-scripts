@@ -1,6 +1,6 @@
 import logging
 import time
-import ast
+import json
 import argparse
 from scripting_api.scripting_api import ScriptingApi
 
@@ -15,6 +15,7 @@ This script is designed to run through a demo pass scenario with the demo python
 https://github.com/kubos/example-python-gateway
 
 Make sure that gateway is connected to the mission before running this script.
+Connecting the gateway will create all the necessary objects for the script.
 
 For instructions on how to run it, run with the "-h" command line argument:
 
@@ -98,6 +99,7 @@ for command in commands:
         time.sleep(1)
 
 # If all commands successfully queue, execute them in order, waiting for each to complete
+# If any command fails, it cancelled all remaining queued commands
 cancel = False
 for command in commands:
     for name in command:
@@ -116,7 +118,7 @@ for command in commands:
             time.sleep(1)
 
 # Get the latest filename and execute the downlink file command now that the file list is updated
-cancel = False
+# Skips if commands were cancelled in the last step.
 if not cancel:
     logger.info("Executing Downlink File command")
 
@@ -130,7 +132,7 @@ if not cancel:
 
     # Returned as a string, so we make it into a python list of dicts and pull out the name of the latest.
     # You should analyze the timestamp to pull out the latest, but we have control of the gateway, which has it nicely ordered for us already.
-    remote_file_list = ast.literal_eval(system["remoteFileList"]["files"])
+    remote_file_list = json.loads(system["remoteFileList"]["files"])
     if remote_file_list == []:
         raise(ScriptError("No remote files to downlink"))
     filename_to_downlink = remote_file_list[-1]["name"]
