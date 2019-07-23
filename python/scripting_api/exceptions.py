@@ -3,6 +3,24 @@ class ApiError(Exception):
     """Base error class for the API"""
 
 
+class ScriptDisabledError(ApiError):
+    """
+    Raised when a Script has been disabled on the server.
+    """
+
+    def __init__(self):
+        super().__init__(f"Script is disabled on the server")
+
+
+class TokenInvalidError(ApiError):
+    """
+    Raised when the given token is invalid.
+    """
+
+    def __init__(self):
+        super().__init__(f"Script token is invalid")
+
+
 class QueryError(ApiError):
     """
     Raised when a query fails with an non-null "error" field.

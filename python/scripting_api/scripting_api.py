@@ -3,7 +3,7 @@ import logging
 import json
 import datetime
 from scripting_api.mutations import Mutations
-from scripting_api.exceptions import QueryError, UnknownObjectError
+from scripting_api.exceptions import QueryError, UnknownObjectError, ScriptDisabledError, TokenInvalidError
 
 logger = logging.getLogger(__name__)
 
@@ -286,6 +286,12 @@ class ScriptingApi:
                                     'variables': variables,
                                     'operationName': operation_name
                                 })
+
+        if request.status_code == 422:
+            raise ScriptDisabledError()
+        elif request.status_code == 403:
+            raise TokenInvalidError()
+
         request.raise_for_status()
 
         json_result = request.json()
