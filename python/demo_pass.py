@@ -66,8 +66,9 @@ api = ScriptingApi(host=args.majortomhost,
 
 # Retrieve Gateway and System (with current staged files)
 gateway = api.gateway(name="Demo")
-system = api.system(name="Space Oddity", return_fields=[
-                    "stagedFiles {edges {node {id,name,downloadPath}}}"])
+system = api.system(
+    name="Space Oddity", return_fields=[
+        "stagedFiles(first: 1, orderBy: { sort: CREATED_AT, direction: DESC }) {edges {node {id,name,downloadPath}}}"])
 
 # Make sure a staged file is there to uplink. We're just pulling the latest one uploaded.
 if len(system["stagedFiles"]["edges"]) == 0:
