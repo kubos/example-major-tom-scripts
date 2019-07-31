@@ -29,7 +29,7 @@ while True:
     results = api.events(system_id=system["id"],
                          start_time=start_time,
                          after_cursor=next_page_cursor,
-                         fields=['command { id }'])
+                         return_fields=['command { id }'])
     next_page_cursor = results["pageInfo"]["endCursor"] or next_page_cursor
 
     for event in results["nodes"]:

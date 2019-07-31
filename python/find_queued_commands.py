@@ -43,7 +43,7 @@ while command["state"] not in ['cancelled', 'completed', 'failed']:
     print('.', end='', flush=True)
 
     # Refresh the command data.
-    command = api.command(id=command["id"], fields=['status', 'output', 'payload', 'remoteErrors'])
+    command = api.command(id=command["id"], return_fields=['status', 'output', 'payload', 'remoteErrors'])
 
     if command["state"] != last_state:
         last_state = command["state"]

@@ -19,7 +19,7 @@ command_definition = api.command_definition(system_name="Satellite0", command_ty
 queue_result = api.mutations.queue_command(system_id=system["id"],
                                            command_definition_id=command_definition["id"],
                                            gateway_id=gateway["id"],
-                                           fields={'filename': 'foo.png'})
+                                           return_fields={'filename': 'foo.png'})
 command = queue_result["command"]
 print(json.dumps(command, indent=2))
 
