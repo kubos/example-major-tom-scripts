@@ -3,7 +3,7 @@ import logging
 import json
 import datetime
 from scripting_api.mutations import Mutations
-from scripting_api.exceptions import QueryError, UnknownObjectError, ScriptDisabledError, TokenInvalidError
+from scripting_api.exceptions import QueryError, UnknownObjectError, ScriptDisabledError, TokenInvalidError, RateLimitError
 
 logger = logging.getLogger(__name__)
 
@@ -289,6 +289,10 @@ class ScriptingApi:
 
         if request.status_code == 422:
             raise ScriptDisabledError()
+        elif request.status_code == 420:
+            raise RateLimitError(reset_after=request.headers['x-ratelimit-resetafter'],
+                                 retry_after=request.headers['x-ratelimit-retryafter'],
+                                 errors=request.json()["errors"])
         elif request.status_code == 403:
             raise TokenInvalidError()
 

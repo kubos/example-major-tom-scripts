@@ -21,11 +21,26 @@ class TokenInvalidError(ApiError):
         super().__init__(f"Script token is invalid")
 
 
+class RateLimitError(ApiError):
+    """
+    Raised when a script's rate limit is reached.
+    ".reset_after" is the time until the rate limit is completely reset
+    ".retry_after" is the time until you can make another request
+    ".server_errors" returns the errors field from the query
+    """
+
+    def __init__(self, reset_after, retry_after, errors):
+        self.reset_after = reset_after
+        self.retry_after = retry_after
+        self.server_errors = errors
+        super().__init__(f"Rate limit exceeded: {errors}")
+
+
 class QueryError(ApiError):
     """
     Raised when a query fails with an non-null "error" field.
     ".request" is the raw request
-    ".errors" returns the errors field from the query
+    ".server_errors" returns the errors field from the query
     """
 
     def __init__(self, request, errors):
