@@ -50,6 +50,11 @@ parser.add_argument(
     '--scheme',
     help="Connection scheme to the API, defaults to https, but can be set to http.",
     default="https")
+parser.add_argument(
+    '--loop_period',
+    help="If you want the script to loop continuously, add the number of seconds between each loop here.",
+    type=int
+)
 
 args = parser.parse_args()
 if args.basicauth:
@@ -158,4 +163,7 @@ while True:
             time.sleep(1)
 
     logger.info("All operations completed.")
-    time.sleep(15)
+    if args.loop_period:
+        time.sleep(args.loop_period)
+    else:
+        break
