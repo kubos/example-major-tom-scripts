@@ -1,1 +1,2 @@
 requests
+majortom-scripting

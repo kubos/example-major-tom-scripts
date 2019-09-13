@@ -2,7 +2,7 @@ import logging
 import time
 import json
 import argparse
-from scripting_api.scripting_api import ScriptingApi
+from majortom_scripting import ScriptingAPI
 
 
 class ScriptError(Exception):
@@ -31,24 +31,30 @@ logging.basicConfig(
 
 # Set up command line arguments
 parser = argparse.ArgumentParser()
-parser._action_groups.pop()
-required = parser.add_argument_group('required arguments')
-optional = parser.add_argument_group('optional arguments')
-required.add_argument(
-    '-m',
-    '--majortomhost',
-    help='Major Tom host name. Can also be an IP address for local development/on prem deployments.',
-    required=True)
-required.add_argument(
-    '-s',
-    '--scripttoken',
-    help='Script Token used to authenticate the connection. Look this up in Major Tom under the script page for the script you are trying to connect.',
-    required=True)
-optional.add_argument(
+
+# Required Args
+parser.add_argument(
+    "majortomhost",
+    help='Major Tom host name. Can also be an IP address for local development/on prem deployments.')
+parser.add_argument(
+    "scripttoken",
+    help='Script Token used to authenticate the connection. Look this up in Major Tom under the script page for the script you are trying to connect.')
+
+# Optional Args
+parser.add_argument(
     '-b',
     '--basicauth',
     help='Basic Authentication credentials. Not required unless BasicAuth is active on the Major Tom instance. Must be in the format "username:password".',
     required=False)
+parser.add_argument(
+    '--scheme',
+    help="Connection scheme to the API, defaults to https, but can be set to http.",
+    default="https")
+parser.add_argument(
+    '--loop_period',
+    help="If you want the script to loop continuously, add the number of seconds between each loop here.",
+    type=int
+)
 
 args = parser.parse_args()
 if args.basicauth:
@@ -59,9 +65,10 @@ else:
     basic_auth_password = None
 
 # Connect to the API
-api = ScriptingApi(host=args.majortomhost,
+api = ScriptingAPI(host=args.majortomhost,
                    basic_auth_username=basic_auth_username,
                    basic_auth_password=basic_auth_password,
+                   scheme=args.scheme,
                    token=args.scripttoken)
 
 while True:
@@ -156,4 +163,7 @@ while True:
             time.sleep(1)
 
     logger.info("All operations completed.")
-    time.sleep(15)
+    if args.loop_period:
+        time.sleep(args.loop_period)
+    else:
+        break
