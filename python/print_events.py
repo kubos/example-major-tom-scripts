@@ -3,14 +3,14 @@ import json
 import sys
 import time
 import datetime
-from scripting_api.scripting_api import ScriptingApi
+from majortom_scripting import ScriptingAPI
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-api = ScriptingApi(host="app.majortom.cloud",
+api = ScriptingAPI(host="app.majortom.cloud",
                    token="YOUR_SCRIPT_TOKEN")
 
 

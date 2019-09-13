@@ -2,14 +2,14 @@ import logging
 import json
 import sys
 import time
-from scripting_api.scripting_api import ScriptingApi
+from majortom_scripting import ScriptingAPI
 
 logger = logging.getLogger(__name__)
 logging.basicConfig(
     level=logging.INFO,
     format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-api = ScriptingApi(host="app.majortom.cloud",
+api = ScriptingAPI(host="app.majortom.cloud",
                    token="YOUR_SCRIPT_TOKEN")
 
 
@@ -43,7 +43,8 @@ while command["state"] not in ['cancelled', 'completed', 'failed']:
     print('.', end='', flush=True)
 
     # Refresh the command data.
-    command = api.command(id=command["id"], return_fields=['status', 'output', 'payload', 'remoteErrors'])
+    command = api.command(id=command["id"], return_fields=[
+                          'status', 'output', 'payload', 'remoteErrors'])
 
     if command["state"] != last_state:
         last_state = command["state"]
