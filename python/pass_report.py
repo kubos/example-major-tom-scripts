@@ -5,7 +5,9 @@ import time
 import datetime
 from majortom_scripting import ScriptingAPI
 
-# Number of minutes in the past:
+# Note: Currently does not paginate, so if the time window is too large, it'll only grab the first page of events/commands. 
+
+# Number of minutes in the past: 
 MINUTES_FROM_NOW = 1
 # Time MINUTES_FROM_NOW in the past
 start_time = datetime.datetime.utcnow() - datetime.timedelta(minutes=MINUTES_FROM_NOW)
