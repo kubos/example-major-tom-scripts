@@ -52,7 +52,7 @@ parser.add_argument(
     default="https")
 parser.add_argument(
     '--loop_period',
-    help="If you want the script to loop continuously, add the number of seconds between each loop here.",
+    help="If you want the script to loop continuously, add the number of minutes between each loop here. Cannot be less that 5 minutes.",
     type=int
 )
 
@@ -63,6 +63,9 @@ if args.basicauth:
 else:
     basic_auth_username = None
     basic_auth_password = None
+if args.loop_period:
+    if args.loop_period < 5:
+        raise ValueError("loop_period must be at least 5 minutes.")
 
 # Connect to the API
 api = ScriptingAPI(host=args.majortomhost,
@@ -86,7 +89,7 @@ while True:
     # Set all the commands we want to run except the final downlink_file command, as it depends on getting the refreshed file list
     commands = [
         {"connect": {}},
-        {"telemetry": {"fields": {"mode": "NOMINAL", "duration": 60}}},
+        {"telemetry": {"fields": {"mode": "NOMINAL", "duration": 300}}},
         {"uplink_file": {"fields": {
             "gateway_download_path": system["stagedFiles"]["edges"][0]["node"]["downloadPath"]}}},
         {"update_file_list": {}}
@@ -164,6 +167,6 @@ while True:
 
     logger.info("All operations completed.")
     if args.loop_period:
-        time.sleep(args.loop_period)
+        time.sleep(args.loop_period*60)
     else:
         break
