@@ -1,0 +1,334 @@
+{
+  "definitions": {
+    "ping": {
+      "display_name": "Ping",
+      "description": "A simple ping. The Gateway should pretend to contact the satellite and return a pong.",
+      "tags": [
+        "testing",
+        "operations"
+      ],
+      "fields": []
+    },
+    "all_transitions": {
+      "display_name": "Show All Transitions",
+      "description": "This command will go through all of the possible command states. Watch the Communications panel on the dashboard to see the changes.",
+      "tags": [
+        "testing",
+        "operations"
+      ],
+      "fields": []
+    },
+    "ping_through_leaf_network": {
+      "display_name": "GSN Ping",
+      "description": "Commands the Gateway to send a ping through a Groundstation Network. If credentials are properly configured, it will echo back.",
+      "tags": [
+        "testing",
+        "operations"
+      ],
+      "fields": []
+    },
+    "telemetry": {
+      "display_name": "Start Telemetry Beacon",
+      "description": "Commands the spacecraft to beacon Health and Status Telemetry. After executing this command, you can see the telemetry by navigating to the Analytics Page",
+      "tags": [
+        "operations",
+        "testing"
+      ],
+      "fields": [
+        {
+          "name": "mode",
+          "type": "string",
+          "range": [
+            "NOMINAL",
+            "ERROR"
+          ]
+        },
+        {
+          "name": "duration",
+          "type": "integer",
+          "default": 300
+        }
+      ]
+    },
+    "error": {
+      "display_name": "Always Error",
+      "description": "Always errors to show the error process.",
+      "tags": [
+        "testing"
+      ],
+      "fields": []
+    },
+    "update_file_list": {
+      "display_name": "Update File List",
+      "description": "Gets the latest list of downloadable files from the spacecraft.",
+      "tags": [
+        "files",
+        "operations"
+      ],
+      "fields": []
+    },
+    "uplink_file": {
+      "display_name": "Uplink File",
+      "description": "Uplink a file from your computer to the spacecraft.",
+      "tags": [
+        "files"
+      ],
+      "fields": [
+        {
+          "name": "gateway_download_path",
+          "type": "string"
+        }
+      ]
+    },
+    "downlink_file": {
+      "display_name": "Downlink File",
+      "description": "Downlink an image from the Spacecraft.",
+      "tags": [
+        "files"
+      ],
+      "fields": [
+        {
+          "name": "filename",
+          "type": "string"
+        }
+      ]
+    },
+    "connect": {
+      "display_name": "Establish RF Lock",
+      "description": "Points antennas and starts broadcasting carrier signal to establish RF lock with the spacecraft.",
+      "tags": [
+        "operations"
+      ],
+      "fields": []
+    },
+    "safemode": {
+      "display_name": "Safemode Command",
+      "description": "Commands the spacecraft into safemode, shutting down all non-essential systems.",
+      "tags": [
+        "operations",
+        "testing"
+      ],
+      "fields": []
+    },
+    "set_power": {
+      "display_name": "Set power to specified components",
+      "description": "Sets the power on various components.",
+      "tags": [
+        "operations",
+        "power"
+      ],
+      "fields": [
+        {
+          "name": "BIT_MASK",
+          "type": "string"
+        }
+      ]
+    },
+    "plenty_o_fields": {
+      "display_name": "This command has many different fields",
+      "description": "Tests the display of many fields. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.",
+      "tags": [
+        "testing",
+        "booleans"
+      ],
+      "fields": [
+        {
+          "name": "Enum Setting",
+          "type": "enum",
+          "enum": {
+            "OFF": 0,
+            "LOW": 10,
+            "MEDIUM": 40,
+            "HIGH": 80
+          }
+        },
+        {
+          "name": "time",
+          "type": "datetime",
+          "default": "now"
+        },
+        {
+          "name": "string1",
+          "type": "string"
+        },
+        {
+          "name": "constant",
+          "type": "string",
+          "value": "constant"
+        },
+        {
+          "name": "default",
+          "type": "string",
+          "default": "default string"
+        },
+        {
+          "name": "charLimit",
+          "type": "string",
+          "characterLimit": 10
+        },
+        {
+          "name": "stringWithRange",
+          "type": "string",
+          "range": [
+            "LOW",
+            "MEDIUM",
+            "EXTREME"
+          ]
+        },
+        {
+          "name": "integer1",
+          "type": "integer"
+        },
+        {
+          "name": "integer2",
+          "type": "integer",
+          "range": [
+            0,
+            1
+          ]
+        },
+        {
+          "name": "integer3",
+          "type": "integer",
+          "range": [
+            0,
+            10
+          ]
+        },
+        {
+          "name": "integer4",
+          "type": "integer",
+          "range": [
+            -100,
+            100
+          ]
+        },
+        {
+          "name": "Long Form Text",
+          "type": "text"
+        },
+        {
+          "name": "Boolean",
+          "type": "boolean"
+        }
+      ]
+    },
+    "boolean_from_integer": {
+      "display_name": "Range[0,1] as Boolean",
+      "description": "Description to give context to the operator.",
+      "tags": [
+        "booleans"
+      ],
+      "fields": [
+        {
+          "name": "integer_with_range",
+          "type": "integer",
+          "range": [
+            0,
+            1
+          ]
+        },
+        {
+          "name": "num_with_range",
+          "type": "number",
+          "range": [
+            0,
+            1
+          ]
+        }
+      ]
+    },
+    "no_boolean": {
+      "display_name": "Range[0,2] as NOT Boolean",
+      "description": "Description to give context to the operator.",
+      "tags": [
+        "operations"
+      ],
+      "fields": [
+        {
+          "name": "mode",
+          "type": "integer",
+          "range": [
+            0,
+            2
+          ]
+        }
+      ]
+    },
+    "many_numbers": {
+      "display_name": "Many numbers",
+      "description": "Description to give context to the operator.",
+      "tags": [
+        "operations"
+      ],
+      "fields": [
+        {
+          "name": "mode",
+          "type": "integer",
+          "range": [
+            0,
+            100
+          ]
+        }
+      ]
+    },
+    "enums": {
+      "display_name": "Enum as Boolean",
+      "description": "Enum for boolean.",
+      "tags": [
+        "booleans"
+      ],
+      "fields": [
+        {
+          "name": "Enum Setting",
+          "type": "enum",
+          "enum": {
+            "ENABLE": 0,
+            "DISABLE": 1
+          }
+        }
+      ]
+    },
+    "regular_boolean_no_default": {
+      "display_name": "Boolean with no Default",
+      "description": "I value freedom from coercion.",
+      "tags": [
+        "booleans"
+      ],
+      "fields": [
+        {
+          "name": "no_default_bool",
+          "type": "boolean"
+        }
+      ]
+    },
+    "boolean_true_default": {
+      "display_name": "Boolean with Default",
+      "description": "I want my choices made easy.",
+      "tags": [
+        "booleans"
+      ],
+      "fields": [
+        {
+          "name": "default_bool",
+          "type": "boolean",
+          "default": true
+        }
+      ]
+    },
+    "boolean_with_range": {
+      "display_name": "Boolean with Custom Labels",
+      "description": "I have the best words.",
+      "tags": [
+        "booleans"
+      ],
+      "fields": [
+        {
+          "name": "custom_label_bool",
+          "type": "boolean",
+          "range": ["NO GO", "GO"]
+        }
+      ]
+    }
+  }
+}

@@ -1,2 +1,4 @@
 requests
-majortom-scripting
+majortom-scripting>=1.0.0
+simple-term-menu
+pygments
